@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import RegistrationView from '/src/pages/RegistrationPage.vue'
-import AuthorizationView from '/src/pages/AuthorizationPage.vue'
+import RegistrationView from '../pages/RegistrationPage.vue'
+import AuthorizationView from '../pages/AuthorizationPage.vue'
 
 
 const routes = [
