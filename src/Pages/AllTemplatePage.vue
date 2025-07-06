@@ -48,7 +48,7 @@
 <script setup>
 import { ref } from 'vue';
 import '../styles/AllTemplatesStyle.css'
-import blankImage from '../styles/template.jpg'
+import blankImage from '../assets/template.jpg'
 
 const templates = ref([
   { id: 1, title: 'Пустая форма', image: blankImage },
