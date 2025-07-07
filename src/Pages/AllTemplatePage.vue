@@ -1,20 +1,19 @@
 <template>
-  <div class="container-fluid">
-    <header class="header">
-        <h2>Forms</h2>
-        <input
-            type="text"
-            class="search-input"
-            placeholder="Поиск..."
-            v-model="searchQuery"
-        />
+  <header class="header">
+    <h2>Forms</h2>
+    <input
+        type="text"
+        class="search-input"
+        placeholder="Search..."
+        v-model="searchQuery"
+    />
 
-        <button class="btn">
-          For admin
-        </button>
-    </header>
-
-    <section class="create-form">
+    <button class="btn">
+      For admin
+    </button>
+  </header>
+  <div class="container all-templates">
+    <section class="public-templates my-2">
       <h2>Template example</h2>
       <div class="templates">
         <div
@@ -26,7 +25,7 @@
         </div>
       </div>
     </section>
-    <section class="recent-forms">
+    <section class="my-templates my-2">
       <h2>My templates</h2>
       <div class="forms-list">
         <div
@@ -46,29 +45,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import '../styles/AllTemplatesStyle.css'
-import blankImage from '../assets/template.jpg'
+import blankImage from '../assets/template.jpg' // запасной вариант
 
-const templates = ref([
-  { id: 1, title: 'Пустая форма', image: blankImage },
-  { id: 2, title: 'Приглашение на вечеринку', image: blankImage },
-  { id: 3, title: 'Контактная информация', image: blankImage },
-  { id: 4, title: 'Ответ на приглашение', image: blankImage },
-  { id: 5, title: 'Заказ футболки', image: blankImage },
-  { id: 6, title: 'Регистрация на мероприятие', image: blankImage },
-]);
+const searchQuery = ref('')
+const templates = ref([])
+const recentForms = ref([]) // ← пока вручную или заполни потом
 
-const recentForms = ref([
-  { id: 1, title: 'Контактная информация', image: blankImage, date: '19:02' },
-  { id: 2, title: 'Приглашение на вечеринку', image: blankImage, date: '30 мая 2025' },
-  { id: 3, title: 'Новая форма', image: blankImage, date: '10 мая 2025' },
-  { id: 4, title: 'Контактная информация', image: blankImage, date: '19:02' },
-  { id: 5, title: 'Приглашение на вечеринку', image: blankImage, date: '30 мая 2025' },
-  { id: 6, title: 'Новая форма', image: blankImage, date: '10 мая 2025' },
-  { id: 7, title: 'Контактная информация', image: blankImage, date: '19:02' },
-  { id: 8, title: 'Приглашение на вечеринку', image: blankImage, date: '30 мая 2025' },
-  { id: 9, title: 'Новая форма', image: blankImage, date: '10 мая 2025' },
-]);
+const fetchPublicTemplates = async () => {
+  try {
+    const response = await axios.get('/api/templates/public') // заменишь на актуальный URL
+    templates.value = response.data.map(t => ({
+      ...t,
+      image: t.image || blankImage // если image отсутствует — используем дефолт
+    }))
+  } catch (error) {
+    console.error('Ошибка при получении публичных шаблонов:', error)
+  }
+}
+onMounted(fetchPublicTemplates)
 </script>
 
