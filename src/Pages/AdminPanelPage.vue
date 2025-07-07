@@ -87,7 +87,7 @@ const searchQuery = ref('')
 onMounted(async () => {
 
   try {
-    const responseGetUsers = await axios.get('https://localhost:7165/User/GetAllUsers')
+    const responseGetUsers = await axios.get('https://Forms.somee.com/User/GetAllUsers')
     console.log("response.data =", responseGetUsers.data)
     users.value = JSON.parse(JSON.stringify(responseGetUsers.data.$values));
     console.log(users);
