@@ -14,7 +14,6 @@
   </header>
   <div class="admin-panel container">
     <h2>All users</h2>
-
     <table class="table">
       <thead class="table">
       <tr>
@@ -22,41 +21,41 @@
         <th>Email</th>
         <th>User Status</th>
         <th class="text-center"></th>
-        <th>User Status</th>
+        <th>Role</th>
         <th class="text-center"></th>
       </tr>
       </thead>
 
       <tbody>
-      <tr v-for="user in filteredUsers" :key="user.id">
-      <td>{{ user.name }}</td>
+      <tr v-for="user in filteredUsers" :key="user.userId">
+      <td>{{ user.userName }}</td>
         <td>{{ user.email }}</td>
         <td>
-            <span :class="user.blocked ? 'text-primary' : 'text-dark'">
-              {{ user.blocked ? 'Blocked' : 'Active' }}
+            <span :class="user.status === 0 ? 'text-primary' : 'text-dark'">
+              {{ user.status === 0 ? 'Active' : "Blocked" }}
             </span>
         </td>
         <td class="text-center">
           <button
               class="btn"
-              :class="user.blocked ? 'btn-primary' : 'btn-dark'"
+              :class="user.status === 1 ? 'btn-primary' : 'btn-dark'"
               @click="toggleBlock(user)"
           >
-            {{ user.blocked ? 'Activate' : 'Block' }}
+            {{ user.status === 1 ? 'Activate' : 'Block' }}
           </button>
         </td>
         <td>
-            <span :class="user.role === 'admin' ? 'text-primary' : 'text-dark'">
-              {{ user.role === 'admin' ? 'Admin' : 'User' }}
+            <span :class="user.role === 0 ? 'text-primary' : 'text-dark'">
+              {{ user.role === 0 ? "Admin" : "User" }}
             </span>
         </td>
         <td class="text-center">
           <button
               class="btn"
-              :class="user.role === 'admin' ? 'btn-primary' : 'btn-dark'"
+              :class="user.role === 1 ? 'btn-primary' : 'btn-dark'"
               @click="toggleRole(user)"
           >
-            {{ user.role === 'admin' ? 'Admin' : 'User' }}
+            {{ user.role === 1 ? 'Admin' : 'User' }}
           </button>
         </td>
       </tr>
@@ -67,39 +66,67 @@
 
 
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
+import axios from 'axios'
 import {computed} from 'vue'
 import '../styles/AdminPanelStyle.css'
 
+/**@typedef {Object} User
+ @property {bigint} userId
+ @property {string} userName
+ @property {string} email
+ @property {int} role
+ @property {int} status
+    */
+
+/** @type {User[]} */
+let users = ref([]);
+
 const searchQuery = ref('')
 
-const users = ref([
-  { id: 1, name: 'Kate', email: 'kate@example.com', blocked: false, role: 'user' },
-  { id: 2, name: 'Julia', email: 'julia@example.com', blocked: true, role: 'admin' },
-  { id: 3, name: 'Zhenya', email: 'zhenya@example.com', blocked: false, role: 'user' },
-  { id: 4, name: 'Kate', email: 'kate@example.com', blocked: false, role: 'user' },
-  { id: 5, name: 'Julia', email: 'julia@example.com', blocked: true, role: 'admin' },
-  { id: 6, name: 'Zhenya', email: 'zhenya@example.com', blocked: false, role: 'user' },
-  { id: 7, name: 'Kate', email: 'kate@example.com', blocked: false, role: 'user' },
-  { id: 8, name: 'Julia', email: 'julia@example.com', blocked: true, role: 'admin' },
-  { id: 9, name: 'Zhenya', email: 'zhenya@example.com', blocked: false, role: 'user' },
-  { id: 10, name: 'Kate', email: 'kate@example.com', blocked: false, role: 'user' },
-  { id: 11, name: 'Julia', email: 'julia@example.com', blocked: true, role: 'admin' },
-  { id: 12, name: 'Zhenya', email: 'zhenya@example.com', blocked: false, role: 'user' },
+onMounted(async () => {
 
-  // Удалим дубли для чистоты
-])
+  try {
+    const responseGetUsers = await axios.get('https://localhost:7165/User/GetAllUsers')
+    console.log("response.data =", responseGetUsers.data)
+    users.value = JSON.parse(JSON.stringify(responseGetUsers.data.$values));
+    console.log(users);
+  }
+  catch (error) {
+    alert(error.message)
+  }
+})
+
+
+/*const users = ref([
+  { id: 1, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
+  { id: 2, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
+  { id: 3, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
+  { id: 4, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
+  { id: 5, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
+  { id: 6, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
+  { id: 7, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
+  { id: 8, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
+  { id: 9, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
+  { id: 10, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
+  { id: 11, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
+  { id: 12, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
+
+])*/
 
 const toggleBlock = (user) => {
-  user.blocked = !user.blocked
+  user.status = user.status === 0 ? 1 : 0
 }
 
 const toggleRole = (user) => {
-  user.role = user.role === 'admin' ? 'user' : 'admin'
+  user.role = user.role === 0 ? 1 : 0
 }
 
-const filteredUsers = computed(() =>
-    users.value.filter(user =>
-        user.email.toLowerCase().includes(searchQuery.value.toLowerCase())
-    ))
+const filteredUsers = computed(() => {
+  if (!Array.isArray(users.value)) return []
+  return users.value.filter(user =>
+      (user.email ?? "").toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+})
+
 </script>
