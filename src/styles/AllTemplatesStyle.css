@@ -28,32 +28,32 @@ h2 {
     margin: 10px;
 }
 
-.container-fluid {
+.all-templates {
     width: 100vw;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: start;
     padding: 0;
 }
 
-.recent-forms,
-.create-form
-{
-    width: 100%;
-}
-
-.create-form{
-    background-color: lightgray;
+.public-templates{
+    background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-radius: 20px;
+    padding: 20px;
+    border: 2px solid lightgray;
 }
 
-.recent-forms{
+.my-templates{
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    padding: 20px;
+    border: 2px solid lightgray;
 }
 
 .templates,
