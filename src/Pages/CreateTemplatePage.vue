@@ -86,12 +86,18 @@
     >
       + Add question
     </button>
+
+    <button class="btn btn-success my-4" @click="saveTemplate">
+      Сохранить шаблон
+    </button>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import '../styles/CreateTemplateStyle.css'
+import axios from "axios";
 
 const formTitle = ref('')
 const formDescription = ref('')
@@ -156,4 +162,54 @@ const removeOption = (question, index) => {
     question.options.splice(index, 1)
   }
 }
+
+
+const saveTemplate = async () => {
+  const payload = {
+    title: formTitle.value,
+    description: formDescription.value,
+    theme: 0,
+    imageUrl: null,
+    tags: [],
+    status: 0,
+    templateCreatorId: sessionStorage.getItem('userId'),
+    questions: questions.value.map(q => ({
+      title: q.title,
+      type: mapTypeToEnum(q.type),
+      options: q.type === 'choice'
+          ? q.options.map(opt => ({ value: opt }))
+          : null
+    }))
+  }
+
+  try {
+    const response = await axios.post('https://localhost:7165/Template/CreateTemplate', payload)
+    alert('Шаблон успешно создан!')
+    formTitle.value = ''
+    formDescription.value = ''
+    questions.value = []
+    Object.keys(typeLimits).forEach(k => typeLimits[k] = 0)
+  }
+  catch (error) {
+    console.error(error)
+    alert('Не удалось сохранить шаблон. Проверь консоль для деталей.')
+  }
+}
+
+
+onMounted(async () => {
+
+})
+
+
+const mapTypeToEnum = (typeStr) => {
+  switch (typeStr) {
+    case 'short': return 0;
+    case 'text': return 1;
+    case 'integer': return 2;
+    case 'choice': return 3;
+    default: return 0;
+  }
+}
+
 </script>
