@@ -31,7 +31,7 @@ const formData = ref({
 const submitForm = async () => {
   try
   {
-    const response = await axios.post('https://forms.runasp.net/User/Authorize', {
+    const response = await axios.post('https://localhost:7165/User/Authorize', {
       email: formData.value.email,
       password: formData.value.password,
     });
