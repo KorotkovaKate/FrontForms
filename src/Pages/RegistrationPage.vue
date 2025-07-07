@@ -33,7 +33,7 @@ const submittedData = ref(null);
 
 const submitForm = async () => {
   try {
-    const response = await axios.post('https://Forms.somee.com/User/Registrate', {
+    const response = await axios.post('https://localhost:7165/User/Registrate', {
       email: formData.value.email,
       username: formData.value.username,
       password: formData.value.password
