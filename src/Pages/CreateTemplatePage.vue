@@ -1,16 +1,6 @@
 <template>
   <header class="header">
     <h2>Forms</h2>
-    <input
-        type="text"
-        class="search-input"
-        placeholder="Search..."
-        v-model="searchQuery"
-    />
-
-    <button class="btn btn-light">
-      For admin
-    </button>
   </header>
   <div class="create-template container col-6">
     <input v-model="formTitle" class="form-control mt-4" placeholder="Enter template title..." />
@@ -21,6 +11,14 @@
         placeholder="Description..."
         rows="2"
     ></textarea>
+
+    <select v-model="selectedTheme" class="form-select my-2">
+      <option disabled value="">Choose theme</option>
+      <option v-for="theme in themeOptions" :key="theme" :value="theme">
+        {{ theme }}
+      </option>
+    </select>
+
 
     <div class="create-question-container">
       <div
@@ -65,19 +63,8 @@
             + Add option
           </button>
         </div>
-
-        <div class="form-check form-switch my-2">
-          <input
-              class="form-check-input"
-              type="checkbox"
-              v-model="question.required"
-              :id="`required-${qIndex}`"
-          />
-          <label class="form-check-label" :for="`required-${qIndex}`">Required question</label>
-        </div>
       </div>
     </div>
-
 
     <button
         class="btn btn-outline-primary"
@@ -87,8 +74,8 @@
       + Add question
     </button>
 
-    <button class="btn btn-success my-4" @click="saveTemplate">
-      Сохранить шаблон
+    <button class="btn btn-outline-primary my-4" @click="saveTemplate">
+      Save
     </button>
 
   </div>
@@ -102,6 +89,21 @@ import axios from "axios";
 const formTitle = ref('')
 const formDescription = ref('')
 const questions = ref([])
+const selectedTheme = ref('');
+
+const themeOptions = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('https://localhost:7165/Template/GetThemes');
+    console.log(response.data);
+    themeOptions.value = response.data;
+  }
+  catch (err) {
+    console.error("Not found theme:", err.message);
+  }
+});
+
 
 const typeLimits = {
   short: 0,
@@ -130,22 +132,20 @@ const removeQuestion = (index) => {
 }
 
 const handleTypeChange = (question) => {
-  // Убираем из предыдущего счётчика
   const previousType = question._type || ''
   if (previousType) {
     typeLimits[previousType]--
   }
 
-  // Обновляем счётчик нового типа
   const type = question.type
   if (typeLimits[type] >= 4) {
-    alert(`Можно не более 4 вопросов типа "${type}"`)
-    question.type = previousType // сбрасываем на прежний
+    alert(`Only 4 questions of one type "${type}"`)
+    question.type = previousType
     return
   }
 
   typeLimits[type]++
-  question._type = type // Сохраняем текущий тип
+  question._type = type
   if (type === 'choice' && question.options.length === 0) {
     question.options = ['']
   } else if (type !== 'choice') {
@@ -163,12 +163,11 @@ const removeOption = (question, index) => {
   }
 }
 
-
 const saveTemplate = async () => {
   const payload = {
     title: formTitle.value,
     description: formDescription.value,
-    theme: 0,
+    theme: selectedTheme.value,
     imageUrl: null,
     tags: [],
     status: 0,
@@ -184,7 +183,7 @@ const saveTemplate = async () => {
 
   try {
     const response = await axios.post('https://localhost:7165/Template/CreateTemplate', payload)
-    alert('Шаблон успешно создан!')
+    alert('Successfully created template')
     formTitle.value = ''
     formDescription.value = ''
     questions.value = []
@@ -192,15 +191,11 @@ const saveTemplate = async () => {
   }
   catch (error) {
     console.error(error)
-    alert('Не удалось сохранить шаблон. Проверь консоль для деталей.')
+    alert('Template was not created')
   }
 }
-
-
 onMounted(async () => {
-
 })
-
 
 const mapTypeToEnum = (typeStr) => {
   switch (typeStr) {
@@ -211,5 +206,4 @@ const mapTypeToEnum = (typeStr) => {
     default: return 0;
   }
 }
-
 </script>

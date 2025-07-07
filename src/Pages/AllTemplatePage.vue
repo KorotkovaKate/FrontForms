@@ -20,7 +20,7 @@
             class="template-card"
             v-for="template in templates"
             :key="template.id">
-          <img :src="template.image" alt="template preview" />
+          <img :src=blankImage alt="template preview" />
           <p>{{ template.title }}</p>
         </div>
       </div>
@@ -51,20 +51,30 @@ import '../styles/AllTemplatesStyle.css'
 import blankImage from '../assets/template.jpg' // запасной вариант
 
 const searchQuery = ref('')
-const templates = ref([])
 const recentForms = ref([]) // ← пока вручную или заполни потом
 
-const fetchPublicTemplates = async () => {
+const token = sessionStorage.getItem('token');
+
+/**@typedef {Object} Template
+ @property {bigint} id
+ @property {string} title
+ @property {string} imageUlr
+ @property {int} countOfLikes
+ */
+
+/** @type {Template[]} */
+let templates = ref([]);
+
+const GetPublicTemplates = async () => {
   try {
-    const response = await axios.get('/api/templates/public') // заменишь на актуальный URL
-    templates.value = response.data.map(t => ({
-      ...t,
-      image: t.image || blankImage // если image отсутствует — используем дефолт
-    }))
-  } catch (error) {
-    console.error('Ошибка при получении публичных шаблонов:', error)
+    const response = await axios.get('https://localhost:7165/Template/GetAllPublicTemplates')
+    templates.value = JSON.parse(JSON.stringify(response.data.$values));
+    console.log(templates)
+  }
+  catch (error) {
+    console.error('Not found templates', error)
   }
 }
-onMounted(fetchPublicTemplates)
+onMounted(GetPublicTemplates)
 </script>
 

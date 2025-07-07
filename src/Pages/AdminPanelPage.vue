@@ -45,17 +45,17 @@
           </button>
         </td>
         <td>
-            <span :class="user.role === 0 ? 'text-primary' : 'text-dark'">
-              {{ user.role === 0 ? "Admin" : "User" }}
+            <span :class="user.role === 1 ? 'text-primary' : 'text-dark'">
+              {{ user.role === 1 ? "Admin" : "User" }}
             </span>
         </td>
         <td class="text-center">
           <button
               class="btn"
-              :class="user.role === 1 ? 'btn-primary' : 'btn-dark'"
+              :class="user.role === 0 ? 'btn-primary' : 'btn-dark'"
               @click="toggleRole(user)"
           >
-            {{ user.role === 1 ? 'Admin' : 'User' }}
+            {{ user.role === 0 ? 'Admin' : 'User' }}
           </button>
         </td>
       </tr>
@@ -87,7 +87,7 @@ const searchQuery = ref('')
 onMounted(async () => {
 
   try {
-    const responseGetUsers = await axios.get('https://Forms.somee.com/User/GetAllUsers')
+    const responseGetUsers = await axios.get('https://localhost:7165/User/GetAllUsers')
     console.log("response.data =", responseGetUsers.data)
     users.value = JSON.parse(JSON.stringify(responseGetUsers.data.$values));
     console.log(users);
@@ -97,29 +97,54 @@ onMounted(async () => {
   }
 })
 
+const toggleBlock = async (user) => {
+  if(user.status === 0){
+    try {
+      await axios.post('https://localhost:7165/User/BlockUser', { userId: user.userId })
+      alert('Successfully blocked')
+      user.status = 1
+    }
+    catch (error) {
+      alert(error.message)
+      alert('Error blocked')
+    }}
+    else{
+      try {
+        await axios.post('https://localhost:7165/User/ActivateUser',  { userId: user.userId })
+        alert('Successfully activated')
+        user.status = 0
+      }
+      catch (error) {
 
-/*const users = ref([
-  { id: 1, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
-  { id: 2, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
-  { id: 3, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
-  { id: 4, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
-  { id: 5, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
-  { id: 6, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
-  { id: 7, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
-  { id: 8, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
-  { id: 9, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
-  { id: 10, name: 'Kate', email: 'kate@example.com', status: 0, role: 0 },
-  { id: 11, name: 'Julia', email: 'julia@example.com', status: 1, role: 1 },
-  { id: 12, name: 'Zhenya', email: 'zhenya@example.com', status: 0, role: 0 },
-
-])*/
-
-const toggleBlock = (user) => {
-  user.status = user.status === 0 ? 1 : 0
+        alert(error.message)
+        alert('Error activated')
+      }
+    }
 }
 
-const toggleRole = (user) => {
-  user.role = user.role === 0 ? 1 : 0
+const toggleRole = async (user) => {
+  if(user.role === 0){
+    try {
+      await axios.post('https://localhost:7165/User/AddToAdmin', { userId: user.userId })
+      alert('User added to admins')
+      user.role = 1
+    }
+    catch (error) {
+      console.log(error.message)
+      alert('Error adding')
+    }}
+  else{
+    try {
+      await axios.post('https://localhost:7165/User/RemoveFromAdmin',  { userId: user.userId })
+      alert('User removed from admins')
+      user.role = 0
+    }
+    catch (error) {
+
+      console.log(error.message)
+      alert('Error removing')
+    }
+  }
 }
 
 const filteredUsers = computed(() => {
