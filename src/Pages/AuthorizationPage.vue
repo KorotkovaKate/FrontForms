@@ -31,7 +31,7 @@ const formData = ref({
 const submitForm = async () => {
   try
   {
-    const response = await axios.post('https://Forms.somee.com/User/GetAllUsers', {
+    const response = await axios.post('https://Forms.somee.com/User/Authorize', {
       email: formData.value.email,
       password: formData.value.password,
     });
