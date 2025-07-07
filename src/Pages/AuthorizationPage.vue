@@ -36,11 +36,12 @@ const submitForm = async () => {
       password: formData.value.password,
     });
 
-    const token = response.data;
+    const {userId, token} = response.data;
 
     sessionStorage.setItem('token', token);
+    sessionStorage.setItem('userId', userId.toString());
 
-    alert('User authorized:');
+    alert('User authorized!');
 
     router.push('/all_templates');
   } catch (error) {
