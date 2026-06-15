@@ -13,6 +13,7 @@
     "bootstrap": "^5.3.7",
     "bootstrap-vue-next": "^0.30.3",
     "i": "^0.3.7",
+    "jwt-decode": "^4.0.0",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
   },
