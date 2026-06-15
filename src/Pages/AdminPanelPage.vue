@@ -1,16 +1,12 @@
 <template>
   <header class="header">
-    <h2>Forms</h2>
+    <button class="btn btn-outline-primary for-home" @click="router.push('/all_templates')">Forms</button>
     <input
         type="text"
         class="search-input"
         placeholder="Search..."
         v-model="searchQuery"
     />
-
-    <button class="btn btn-light">
-      For admin
-    </button>
   </header>
   <div class="admin-panel container">
     <h2>All users</h2>
@@ -37,8 +33,8 @@
         </td>
         <td class="text-center">
           <button
-              class="btn"
-              :class="user.status === 1 ? 'btn-primary' : 'btn-dark'"
+              class="btn btn-outline-primary my-4"
+              :class="user.status === 1 ? 'btn btn-primary' : 'btn btn-dark'"
               @click="toggleBlock(user)"
           >
             {{ user.status === 1 ? 'Activate' : 'Block' }}
@@ -51,8 +47,8 @@
         </td>
         <td class="text-center">
           <button
-              class="btn"
-              :class="user.role === 0 ? 'btn-primary' : 'btn-dark'"
+              class="btn btn-outline-primary my-4"
+              :class="user.role === 0 ? 'btn btn-primary' : 'btn btn-dark'"
               @click="toggleRole(user)"
           >
             {{ user.role === 0 ? 'Admin' : 'User' }}
@@ -70,6 +66,7 @@ import {onMounted, ref} from 'vue'
 import axios from 'axios'
 import {computed} from 'vue'
 import '../styles/AdminPanelStyle.css'
+import router from "@/router/index.js";
 
 /**@typedef {Object} User
  @property {bigint} userId
@@ -87,7 +84,7 @@ const searchQuery = ref('')
 onMounted(async () => {
 
   try {
-    const responseGetUsers = await axios.get('https://localhost:7165/User/GetAllUsers')
+    const responseGetUsers = await axios.get('http://localhost:5065/User/GetAllUsers')
     console.log("response.data =", responseGetUsers.data)
     users.value = JSON.parse(JSON.stringify(responseGetUsers.data.$values));
     console.log(users);
@@ -98,9 +95,15 @@ onMounted(async () => {
 })
 
 const toggleBlock = async (user) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+
   if(user.status === 0){
     try {
-      await axios.post('https://localhost:7165/User/BlockUser', { userId: user.userId })
+      await axios.post('http://localhost:5065/User/BlockUser', user.userId, config)
       alert('Successfully blocked')
       user.status = 1
     }
@@ -110,7 +113,7 @@ const toggleBlock = async (user) => {
     }}
     else{
       try {
-        await axios.post('https://localhost:7165/User/ActivateUser',  { userId: user.userId })
+        await axios.post('http://localhost:5065/User/ActivateUser',  user.userId, config)
         alert('Successfully activated')
         user.status = 0
       }
@@ -123,9 +126,15 @@ const toggleBlock = async (user) => {
 }
 
 const toggleRole = async (user) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+
   if(user.role === 0){
     try {
-      await axios.post('https://localhost:7165/User/AddToAdmin', { userId: user.userId })
+      await axios.post('http://localhost:5065/User/AddUserToAdmin', user.userId, config)
       alert('User added to admins')
       user.role = 1
     }
@@ -135,7 +144,7 @@ const toggleRole = async (user) => {
     }}
   else{
     try {
-      await axios.post('https://localhost:7165/User/RemoveFromAdmin',  { userId: user.userId })
+      await axios.post('http://localhost:5065/User/RemoveUserFromAdmin', user.userId, config)
       alert('User removed from admins')
       user.role = 0
     }
