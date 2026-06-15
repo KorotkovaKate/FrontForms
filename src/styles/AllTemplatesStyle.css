@@ -1,12 +1,12 @@
 .header {
-    background-color: #f8f9fa;
+    background-color: whitesmoke;
     border-bottom: 1px solid #dee2e6;
     position: sticky;
     top: 0;
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    padding-right: 700px;
 }
 
 .search-input {
@@ -89,4 +89,32 @@ h2 {
 .form-date {
     color: #888;
     font-size: 0.85rem;
+}
+
+.btn-light{
+    margin: 10px;
+    font-size: 20px;
+    border-radius: 20px;
+    /*visibility: hidden;*/
+}
+
+.btn-dark{
+    background-color: dimgrey;
+    border-color: dimgrey;
+    padding: 0;
+}
+
+.btn-outline-primary{
+    margin: 0px;
+    color: black;
+    font-size: 20px;
+    border-color: #908CD2;
+    border-radius: 20px;
+}
+.btn-outline-primary:hover {
+    background-color: #908CD2;
+    border-color: #908CD2;
+    transform: translateY(1px);
+    box-shadow: none;
+    color: white;
 }

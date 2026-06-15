@@ -4,7 +4,11 @@ body {
 }
 
 .container-fluid {
-    background-color: #FFFFFF;
+    background-image: url('/src/assets/background.JPG');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     height: 100vh;
     display: flex;
     justify-content: center !important;
@@ -12,6 +16,7 @@ body {
 }
 
 .auth-container {
+    background-color: white;
     padding: 20px;
     border: #0f345c 2px solid;
     border-radius: 20px;
