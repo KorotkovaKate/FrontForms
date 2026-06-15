@@ -21,6 +21,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 import '../styles/AuthRegPage.css'
 import router from "@/router/index.js";
+import { jwtDecode } from 'jwt-decode';
 import RegistrationPage from "@/Pages/RegistrationPage.vue";
 
 const formData = ref({
@@ -31,15 +32,23 @@ const formData = ref({
 const submitForm = async () => {
   try
   {
-    const response = await axios.post('https://localhost:7165/User/Authorize', {
+    const response = await axios.post('http://localhost:5065/User/Authorize', {
       email: formData.value.email,
       password: formData.value.password,
     });
 
-    const {userId, token} = response.data;
+    const { token } = response.data;
+
+    const decodedToken = jwtDecode(token);
+
+    const userId = decodedToken.id;
+    const userRole = decodedToken.role;
+
+    console.log(userRole);
 
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('userId', userId.toString());
+    sessionStorage.setItem('userRole', userRole);
 
     alert('User authorized!');
 
