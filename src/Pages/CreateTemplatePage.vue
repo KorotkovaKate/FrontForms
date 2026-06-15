@@ -1,9 +1,11 @@
 <template>
   <header class="header">
-    <h2>Forms</h2>
+    <button class="btn btn-outline-primary for-home" @click="router.push('/all_templates')">Forms</button>
+    <h2>Create your template!</h2>
+    <button class="btn btn-outline-primary">Publish</button>
   </header>
   <div class="create-template container col-6">
-    <input v-model="formTitle" class="form-control mt-4" placeholder="Enter template title..." />
+    <input v-model="formTitle" class="form-control" placeholder="Enter template title..." />
 
     <textarea
         v-model="formDescription"
@@ -14,8 +16,8 @@
 
     <select v-model="selectedTheme" class="form-select my-2">
       <option disabled value="">Choose theme</option>
-      <option v-for="theme in themeOptions" :key="theme" :value="theme">
-        {{ theme }}
+      <option v-for="theme in themeOptions" :key="theme.id" :value="theme.id">
+        {{ theme.name }}
       </option>
     </select>
 
@@ -27,11 +29,11 @@
           class="question-card position-relative"
       >
         <h5>Question {{ qIndex + 1 }}</h5>
-          <button
-              class="btn-close position-absolute top-0 end-0"
-              @click="removeQuestion(qIndex)"
-              aria-label="Delete question"
-          ></button>
+        <button
+            class="btn-close position-absolute top-0 end-0"
+            @click="removeQuestion(qIndex)"
+            aria-label="Delete question"
+        ></button>
         <input
             v-model="question.title"
             class="form-control my-2"
@@ -82,9 +84,13 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router' // 🔴 Импортируем useRoute для чтения query-параметров
 import '../styles/CreateTemplateStyle.css'
 import axios from "axios";
+import router from "@/router/index.js";
+
+const route = useRoute() // 🔴 Инициализируем роут
 
 const formTitle = ref('')
 const formDescription = ref('')
@@ -93,24 +99,54 @@ const selectedTheme = ref('');
 
 const themeOptions = ref([]);
 
-onMounted(async () => {
-  try {
-    const response = await axios.get('https://localhost:7165/Template/GetThemes');
-    console.log(response.data);
-    themeOptions.value = response.data;
-  }
-  catch (err) {
-    console.error("Not found theme:", err.message);
-  }
-});
-
-
 const typeLimits = {
   short: 0,
   integer: 0,
   choice: 0,
   text: 0
 }
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('http://localhost:5065/Template/GetTemplateThemes');
+    themeOptions.value = response.data.$values || [];
+  }
+  catch (err) {
+    console.error("Not found theme:", err.message);
+  }
+
+  const sourceId = route.query.sourceId
+  if (sourceId) {
+    try {
+      const sourceResponse = await axios.get(`http://localhost:5065/Template/GetTemplateById/${sourceId}`)
+      const sourceData = sourceResponse.data
+
+      formTitle.value = `Copy of ${sourceData.title || ''}`
+      formDescription.value = sourceData.description || ''
+      selectedTheme.value = sourceData.theme || ''
+
+      const sourceQuestions = sourceData.questions?.$values || sourceData.questions || []
+
+      questions.value = sourceQuestions.map(q => {
+        const stringType = mapEnumToTypeStr(q.type)
+
+        typeLimits[stringType]++
+
+        return {
+          title: q.title || '',
+          type: stringType,
+          _type: stringType,
+          required: false,
+          options: q.type === 3
+              ? (q.options?.$values || q.options || []).map(opt => opt.value || '')
+              : []
+        }
+      })
+    } catch (err) {
+      console.error("Не удалось подгрузить шаблон-донор для копирования:", err)
+    }
+  }
+});
 
 const addQuestion = () => {
   if (questions.value.length >= 16) return
@@ -167,11 +203,11 @@ const saveTemplate = async () => {
   const payload = {
     title: formTitle.value,
     description: formDescription.value,
-    theme: selectedTheme.value,
+    theme: parseInt(selectedTheme.value),
     imageUrl: null,
     tags: [],
     status: 0,
-    templateCreatorId: sessionStorage.getItem('userId'),
+    templateCreatorId: parseInt(sessionStorage.getItem('userId')),
     questions: questions.value.map(q => ({
       title: q.title,
       type: mapTypeToEnum(q.type),
@@ -182,20 +218,22 @@ const saveTemplate = async () => {
   }
 
   try {
-    const response = await axios.post('https://localhost:7165/Template/CreateTemplate', payload)
+    const response = await axios.post('http://localhost:5065/Template/CreateTemplate', payload)
     alert('Successfully created template')
+
     formTitle.value = ''
     formDescription.value = ''
+    selectedTheme.value = ''
     questions.value = []
     Object.keys(typeLimits).forEach(k => typeLimits[k] = 0)
+
+    router.push('/all_templates')
   }
   catch (error) {
     console.error(error)
     alert('Template was not created')
   }
 }
-onMounted(async () => {
-})
 
 const mapTypeToEnum = (typeStr) => {
   switch (typeStr) {
@@ -204,6 +242,16 @@ const mapTypeToEnum = (typeStr) => {
     case 'integer': return 2;
     case 'choice': return 3;
     default: return 0;
+  }
+}
+
+const mapEnumToTypeStr = (typeEnum) => {
+  switch (typeEnum) {
+    case 0: return 'short';
+    case 1: return 'text';
+    case 2: return 'integer';
+    case 3: return 'choice';
+    default: return 'short';
   }
 }
 </script>
