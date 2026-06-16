@@ -35,7 +35,6 @@
             :key="template.id"
             @click = "GoToPreviewPage(template.id)"
         >
-          <!-- 💡 Используем уникальную картинку, если она есть, иначе blankImage -->
           <img :src="template.imageUlr || blankImage" alt="template preview" />
           <p>{{ template.title }}</p>
         </div>
