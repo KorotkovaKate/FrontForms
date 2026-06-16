@@ -1,35 +1,37 @@
 <template>
-  <div class="container col-6 mt-5" v-if="template">
-    <div class="card p-4 shadow-sm mb-4 bg-light">
+  <header class="header">
+    <button class="btn btn-outline-primary for-home" @click="router.push('/all_templates')">Forms</button>
+  </header>
+  <div class="container col-6" v-if="template">
+    <div class="card m-2 p-2 shadow-sm bg-light">
       <h2>{{ template.title }}</h2>
-      <p class="text-muted">{{ template.description }}</p>
-      <span class="badge bg-secondary w-25">Theme ID: {{ template.theme }}</span>
+      <p class="text-muted p-2">{{ template.description }}</p>
     </div>
 
-    <div class="questions-preview my-4">
+    <div class="questions-preview m-2 p-2">
       <h4>Questions in this template ({{ templateQuestions.length }}):</h4>
       <div
           v-for="(q, idx) in templateQuestions"
           :key="idx"
-          class="border-bottom py-2"
+          class="border-bottom p-2"
       >
         <strong>{{ idx + 1 }}. {{ q.title }}</strong>
-        <span class="text-muted mx-2">({{ mapEnumToTypeStr(q.type) }})</span>
+        <span class="text-muted m-2">({{ mapEnumToTypeStr(q.type) }})</span>
       </div>
     </div>
 
-    <div class="d-flex gap-3 my-4">
-      <button class="btn btn-primary btn-lg flex-grow-1" @click="goToFill">
+    <div class="d-flex gap-3 m-2">
+      <button class="btn btn-primary flex-grow-1" @click="goToFill">
         Take survey
       </button>
-      <button class="btn btn-outline-success btn-lg flex-grow-1" @click="goToCopyAndEdit">
+      <button class="btn btn-outline-success flex-grow-1" @click="goToCopyAndEdit">
         Copy & Edit Template
       </button>
     </div>
 
-    <div class="comments-section mt-5 card p-4 shadow-sm">
-      <h4 class="mb-3">Comments</h4>
-      <div class="mb-4">
+    <div class="comments-section m-2 card p-2 shadow-sm">
+      <h4 class="m-2">Comments</h4>
+      <div>
         <textarea
             v-model="newCommentText"
             class="form-control"
@@ -37,7 +39,7 @@
             placeholder="Write a comment..."
         ></textarea>
         <button
-            class="btn btn-primary mt-2"
+            class="btn btn-primary m-2"
             @click="sendComment"
             :disabled="!newCommentText.trim()"
         >
@@ -46,15 +48,15 @@
       </div>
 
       <div v-if="comments.length > 0" class="comments-list">
-        <div v-for="comment in comments" :key="comment.id" class="border-bottom py-3">
-          <div class="d-flex justify-content-between mb-1">
+        <div v-for="comment in comments" :key="comment.id" class="border-bottom p-2">
+          <div class="d-flex justify-content-between m-2">
             <span class="fw-bold text-primary">{{ comment.userName }}</span>
             <small class="text-muted">{{ formatDate(comment.publishTime) }}</small>
           </div>
           <p class="mb-0 text-dark" style="white-space: pre-wrap;">{{ comment.commentText }}</p>
         </div>
       </div>
-      <div v-else class="text-muted text-center py-3">
+      <div v-else class="text-muted text-center p-2">
         No comments yet. Be the first to leave a comment!
       </div>
     </div>
@@ -70,6 +72,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import '../styles/PreviewStyle.css'
 
 const route = useRoute()
 const router = useRouter()
