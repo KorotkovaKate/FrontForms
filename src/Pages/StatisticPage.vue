@@ -24,7 +24,6 @@
     >
       <h5 class="">{{ index + 1 }}. {{ question.title }}</h5>
 
-      <!-- самый частый ответ -->
       <div class="my-2">
         <label class="form-label mb-1">Most common answer:</label>
         <input
@@ -35,7 +34,6 @@
         />
       </div>
 
-      <!-- процент ответов -->
       <div class="my-2">
         <label class="form-label mb-1">Answer percentage:</label>
         <input
@@ -70,25 +68,30 @@ const templateQuestions = ref([])
 const statistics = ref([])
 
 onMounted(async () => {
+  const templateId = route.params.templateId
   try {
-    const templateId = 6
-
-    const [templateResponse, statsResponse] = await Promise.all([
-      axios.get(`http://localhost:5065/Template/GetTemplateById/${templateId}`),
-      axios.get(`http://localhost:5065/Statistic/GetStatisticsByTemplateId/${templateId}`)
-    ]);
-
+    const templateResponse = await axios.get(`http://localhost:5065/Template/GetTemplateById/${templateId}`);
     template.value = templateResponse.data;
     templateQuestions.value = templateResponse.data.questions?.$values || templateResponse.data.questions || [];
+  } catch (error) {
+    console.error("Не удалось загрузить шаблон:", error);
+    alert("Error loading template.");
+    router.push('/all_templates');
+    return;
+  }
 
+  try {
+    const statsResponse = await axios.get(`http://localhost:5065/Statistic/GetStatisticsByTemplateId/${templateId}`);
     statistics.value = statsResponse.data?.$values || statsResponse.data || [];
-
   } catch (error) {
     console.error("Не удалось загрузить данные статистики:", error);
+
     if (error.response?.status === 404) {
-      console.warn("Статистика для данного шаблона еще не создана (нет ответов).");
+      alert(`Статистика для шаблона "${template.value?.title || ''}" еще не создана (нет ответов).`);
+      router.push('/all_templates');
     } else {
       alert("Error loading template analytics.");
+      router.push('/all_templates');
     }
   }
 });
@@ -115,11 +118,11 @@ const downloadCSV = () => {
   const headers = ['№', 'Question Title', 'Most Common Answer', 'Percentage'];
 
   const rows = templateQuestions.value.map((question, index) => {
-    const stat = getStatForQuestion(question.id); // Наша готовая функция поиска статы
+    const stat = getStatForQuestion(question.id);
 
     return [
       index + 1,
-      `"${question.title.replace(/"/g, '""')}"`, // Экранируем кавычки в тексте
+      `"${question.title.replace(/"/g, '""')}"`,
       `"${stat.mostCommonAnswer.replace(/"/g, '""')}"`,
       `"${stat.percentage}"`
     ];
