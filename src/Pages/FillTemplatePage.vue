@@ -5,32 +5,27 @@
         @click="router.push('/all_templates')">
       Forms
     </button>
-    <input
-        type="text"
-        class="search-input"
-        placeholder="Search..."
-        v-model="searchQuery"
-    />
-  </header>>
-  <div class="container col-6 mt-5" v-if="template">
 
-    <div class="card p-4 shadow-sm mb-4 bg-light">
+  </header>>
+  <div class="container col-6" v-if="template">
+
+    <div class="card m-2 p-2 shadow-sm bg-light">
       <h2>{{ template.title }}</h2>
-      <p class="text-muted mb-0" v-if="template.description">{{ template.description }}</p>
+      <p class="text-muted m-2 p-2 " v-if="template.description">{{ template.description }}</p>
     </div>
 
     <form @submit.prevent="submitForm">
       <div
           v-for="(question, index) in templateQuestions"
           :key="question.id"
-          class="card my-3 p-3 shadow-sm"
+          class="card m-2 p-3 shadow-sm"
       >
-        <h5 class="mb-3">{{ index + 1 }}. {{ question.title }}</h5>
+        <h5 class="m-2">{{ index + 1 }}. {{ question.title }}</h5>
 
         <input
             v-if="question.type === 0"
             v-model="userAnswers[index].textValue"
-            class="form-control"
+            class="form-control p-2"
             placeholder="Short answer..."
             required
         />
@@ -38,7 +33,7 @@
         <textarea
             v-if="question.type === 1"
             v-model="userAnswers[index].textValue"
-            class="form-control"
+            class="form-control p-2"
             rows="3"
             placeholder="Long answer..."
             required
@@ -48,16 +43,16 @@
             v-if="question.type === 2"
             v-model.number="userAnswers[index].textValue"
             type="number"
-            class="form-control"
+            class="form-control p-2"
             placeholder="Enter number..."
             required
         />
 
-        <div v-if="question.type === 3" class="mt-2">
+        <div v-if="question.type === 3" class="m-2">
           <div
               v-for="(opt, oIdx) in question.options?.$values || question.options || []"
               :key="oIdx"
-              class="form-check my-2"
+              class="form-check m-2"
           >
             <input
                 type="radio"
@@ -75,20 +70,20 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-success my-4 w-100 py-2">Submit Answers</button>
+      <button type="submit" class="btn btn-success">Submit Answers</button>
     </form>
   </div>
 
-  <!-- Экран загрузки, пока данные не пришли с бэкенда -->
-  <div v-else class="text-center mt-5">
+  <div v-else class="text-center m-2">
     <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-2 text-muted">Loading template...</p>
+    <p class="m-2 text-muted">Loading template...</p>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import '../styles/FillForm.css'
 import axios from 'axios'
 
 const route = useRoute()
