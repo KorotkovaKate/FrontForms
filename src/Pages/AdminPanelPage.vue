@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header class="header p-0">
     <button class="btn btn-outline-primary for-home" @click="router.push('/all_templates')">Forms</button>
     <input
         type="text"
@@ -7,6 +7,11 @@
         placeholder="Search..."
         v-model="searchQuery"
     />
+    <button
+        class="btn btn-outline-primary m-2"
+        @click="exitFromAccount">
+      Exit
+    </button>
   </header>
   <div class="admin-panel container">
     <h2>All users</h2>
@@ -33,7 +38,7 @@
         </td>
         <td class="text-center">
           <button
-              class="btn btn-outline-primary my-4"
+              class="btn btn-outline-primary p-0"
               :class="user.status === 1 ? 'btn btn-primary' : 'btn btn-dark'"
               @click="toggleBlock(user)"
           >
@@ -47,7 +52,7 @@
         </td>
         <td class="text-center">
           <button
-              class="btn btn-outline-primary my-4"
+              class="btn btn-outline-primary p-0"
               :class="user.role === 0 ? 'btn btn-primary' : 'btn btn-dark'"
               @click="toggleRole(user)"
           >
@@ -65,8 +70,8 @@
 import {onMounted, ref} from 'vue'
 import axios from 'axios'
 import {computed} from 'vue'
-import '../styles/AdminPanelStyle.css'
 import router from "@/router/index.js";
+import '../styles/AdminPanelStyle.css'
 
 /**@typedef {Object} User
  @property {bigint} userId
