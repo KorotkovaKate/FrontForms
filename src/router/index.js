@@ -43,7 +43,7 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        path: '/statistics',
+        path: '/statistics/:templateId',
         name: 'Statistics',
         component: Statistics,
         meta: { requiresAuth: true }
