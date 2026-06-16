@@ -5,29 +5,24 @@
         @click="router.push('/all_templates')">
       Forms
     </button>
-    <input
-        type="text"
-        class="search-input"
-        placeholder="Search..."
-        v-model="searchQuery"
-    />
-    <button
-        class="btn btn-outline-primary"
-        @click="router.push('/create_template')">
-      New Template
-    </button>
-    <button
-        class="btn btn-outline-primary"
-        @click="router.push('/admin_panel')"
-        v-if="userRole === 'Admin'">
-      For admin
-    </button>
-    <button
-        class="btn btn-outline-primary"
-        style="color: red"
-        @click="exitFromAccount">
-      Exit
-    </button>
+    <div class="button-group">
+      <button
+          class="btn btn-outline-primary m-1"
+          @click="router.push('/create_template')">
+        New Template
+      </button>
+      <button
+          class="btn btn-outline-primary m-1"
+          @click="router.push('/admin_panel')"
+          v-if="userRole === 'Admin'">
+        For admin
+      </button>
+      <button
+          class="btn btn-outline-primary m-1"
+          @click="exitFromAccount">
+        Exit
+      </button>
+    </div>
   </header>
 
   <div class="container all-templates">
@@ -54,17 +49,39 @@
             class="form-card"
             v-for="form in allTemplates"
             :key="form.id"
-            @click = "GoToFillTemplatePage(form.id)"
+            @click="GoToFillTemplatePage(form.id)"
         >
+          <div class="card-container">
+            <img :src="form.imageUlr || blankImage" alt="template image" />
+            <div class="form-info">
+              <div>
+                <p class="form-title">{{ form.title }}</p>
+                <p class="form-date">{{ form.date }}</p>
+              </div>
 
-          <img :src="form.imageUlr || blankImage" alt="template image" />
-          <div class="form-info">
-            <p class="form-title">{{ form.title }}</p>
-            <p class="form-date">{{ form.date }}</p>
+              <div class="form-actions d-flex gap-1 mt-2">
+                <button
+                    class="btn btn-sm btn-outline-secondary flex-grow-1"
+                    @click.stop="GoToStatisticsPage(form.id)"
+                    title="View Statistics"
+                >
+                  Stats
+                </button>
+                <button
+                    class="btn btn-sm btn-outline-success flex-grow-1"
+                    @click.stop="ShareTemplate(form.id)"
+                    title="Copy Link to Share"
+                >
+                  Share
+                </button>
+              </div>
+          </div>
+
           </div>
         </div>
       </div>
     </section>
+
   </div>
 </template>
 
@@ -142,6 +159,22 @@ const exitFromAccount = () => {
   sessionStorage.clear()
 
   router.push('/auth')
+}
+
+const GoToStatisticsPage = (id) => {
+  router.push(`/statistics/${id}`)
+}
+
+const ShareTemplate = async (id) => {
+  const shareUrl = `${window.location.origin}/fill_form/${id}`
+
+  try {
+    await navigator.clipboard.writeText(shareUrl)
+    alert('Link copied to clipboard successfully!')
+  } catch (error) {
+    console.error('Failed to copy link', error)
+    alert('Could not copy link automatically. URL: ' + shareUrl)
+  }
 }
 
 onMounted(() => {
