@@ -1,0 +1,124 @@
+body {
+    background-image: url('/src/assets/background.JPG');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.header {
+    background-color: whitesmoke;
+    border-bottom: 1px solid #dee2e6;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.container {
+    margin-top: 10px;
+    background-color: whitesmoke;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.card {
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 6px -3px rgba(0, 0, 0, 0.2);
+}
+
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.bg-secondary {
+    background-color: #908CD2 !important;
+    color: white !important;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 20px;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 4px 6px -3px rgba(0, 0, 0, 0.2) !important;
+}
+
+Questions-preview {
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.Questions-preview h4 {
+    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.btn-outline-success {
+    background-color: transparent;
+    color: #908CD2;
+    border-color: #908CD2;
+    border-radius: 20px;
+    font-size: 18px;
+    padding: 12px 24px;
+    font-weight: bold;
+}
+
+.btn-outline-success:hover {
+    background-color: #908CD2;
+    border-color: #908CD2;
+    color: white;
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 6px -3px rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    font-size: 16px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #908CD2;
+    box-shadow: 0 4px 6px -3px rgba(144, 140, 210, 0.3);
+}
+
+.btn-primary {
+    background-color: #908CD2;
+    border-color: #908CD2;
+    border-radius: 20px;
+    font-size: 18px;
+    padding: 12px 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #7a76c4;
+    border-color: #7a76c4;
+    color: white;
+    transform: translateY(1px);
+    box-shadow: none;
+}
