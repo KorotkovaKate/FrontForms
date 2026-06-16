@@ -59,7 +59,7 @@
                 class="form-control my-2"
                 :placeholder="`Option ${index + 1}`"
             />
-            <button class="btn btn-dark" @click="removeOption(question, index)">Delete</button>
+            <button class="btn btn-dark m-2 mx-0" @click="removeOption(question, index)">Delete</button>
           </div>
           <button class="btn btn-outline-primary" @click="addOption(question)">
             + Add option
@@ -76,7 +76,7 @@
       + Add question
     </button>
 
-    <button class="btn btn-outline-primary my-4" @click="saveTemplate">
+    <button class="btn btn-outline-primary m-2" @click="saveTemplate">
       Save
     </button>
 
@@ -85,12 +85,12 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router' // 🔴 Импортируем useRoute для чтения query-параметров
-import '../styles/CreateTemplateStyle.css'
+import { useRoute } from 'vue-router'
 import axios from "axios";
 import router from "@/router/index.js";
+import '../styles/CreateTemplateStyle.css'
 
-const route = useRoute() // 🔴 Инициализируем роут
+const route = useRoute()
 
 const formTitle = ref('')
 const formDescription = ref('')
